@@ -367,3 +367,47 @@ print(s) # выведи результат
 - IP адрес в сети - рандомный IP адрес из сети
 - Адрес сети - зарезервированный IP адрес, используемый для обозначения всей сети
 - Маска сети - битовая маска для определения по IP-адресу адреса подсети и адреса узла (хоста, компьютера, устройства) этой подсети
+
+Правила:
+- если октет маски `255`, то октет IP адреса останется **таким же**, а $`255_{10} = 11111111_{2}`$
+- если октет маски `0`, то октет IP адреса будет `0`
+
+#### Приступим к харду?
+Тогда решим задачку [2238](https://inf-ege.sdamgia.ru/problem?id=2238 "Задачка на портале") на определение **адреса сети**
+
+```python
+table = {0: 'А', 145: 'B', 255: 'C', 137 : 'D', 128 : 'E', 240 : 'F', 88 : 'G', 92 : 'H'} # Создаем буковенный список для сразу получения решения
+ip_msk = [145 & 255, 92 & 255, 137 & 240, 88 & 0] # Сразу сложенный список
+ans = ""
+for i in ip_msk:
+    if i in table: # если элемент из списка встречается в словаре, то выводим элемент словаря
+        ans += table[i]
+print(ans)
+```
+
+Теперь решим [7669](https://inf-ege.sdamgia.ru/problem?id=7669 "Задачка на портале") на определение **маски**
+
+Решать будем с помощью встроенной библиотеки `ipaddress`
+```python
+from ipaddress import ip_network, IPv4Address
+
+for mask in range(32):  # Перебираем маски
+    net = ip_network(f"224.128.112.142/{mask}", strict=False) # создаем сеть
+
+    if str(net.network_address) == "224.128.64.0": # Проверяем адрес сети
+        mask = str(IPv4Address(int(("1" * mask).ljust(32, "0"), 2))) # конструируем маску
+        print(mask.split(".")[2]) # выводим ответ
+```
+
+Теперь **подсчет количества адресов в сети** - [2231](https://inf-ege.sdamgia.ru/problem?id=2231 "Задачка на портале")
+
+Также заиспользуем `ipaddress`
+```python
+from ipaddress import *
+def calculate_host_number(subnet_mask, ip_address):
+    network = IPv4Network(ip_address + '/' + subnet_mask, strict=False) # создаем сеть
+    host_number = int(IPv4Address(ip_address)) - int(network.network_address) # считаем номер компьютера
+    return host_number
+print(calculate_host_number('255.255.255.224', '162.198.0.157'))
+```
+
