@@ -431,7 +431,7 @@ def convert_to(number, base, upper=False):
     digits = '0123456789abcdefghijklmnopqrstuvwxyz'
     result = ''
     while number > 0:
-        result = digits[number % base]
+        result += digits[number % base]
         number //= base
     return result[::-1].upper() if upper else result[::-1]
 ```
